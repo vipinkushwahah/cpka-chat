@@ -2,6 +2,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import socket from '../services/socket';
 
+// Initialize peerConnections without passing arguments to createRef
+export const peerConnections = React.createRef<{ [key: string]: RTCPeerConnection }>(); // No initial value passed
+
 interface VideoGridProps {
   room: string;
   username: string;
@@ -10,7 +13,6 @@ interface VideoGridProps {
 const VideoGrid: React.FC<VideoGridProps> = ({ room, username }) => {
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const [peers, setPeers] = useState<{ [key: string]: MediaStream }>({});
-  const peerConnections = useRef<{ [key: string]: RTCPeerConnection }>({});
 
   useEffect(() => {
     const initLocalStream = async () => {
@@ -19,11 +21,16 @@ const VideoGrid: React.FC<VideoGridProps> = ({ room, username }) => {
           video: true,
           audio: true,
         });
+
         if (localVideoRef.current) {
           localVideoRef.current.srcObject = stream;
         }
 
+        // Handle incoming group call offer
         socket.on('group_call_offer', async ({ from, offer }) => {
+          // Initialize peerConnections.current safely
+          if (!peerConnections.current) peerConnections.current = {};
+
           const pc = new RTCPeerConnection();
           peerConnections.current[from] = pc;
 
@@ -40,21 +47,23 @@ const VideoGrid: React.FC<VideoGridProps> = ({ room, username }) => {
           socket.emit('group_call_answer', { to: from, answer });
         });
 
+        // Handle incoming group call answer
         socket.on('group_call_answer', async ({ from, answer }) => {
-          const pc = peerConnections.current[from];
+          const pc = peerConnections.current?.[from];
           if (pc) {
             await pc.setRemoteDescription(new RTCSessionDescription(answer));
           }
         });
 
+        // Handle ICE candidate messages
         socket.on('ice_candidate', async ({ from, candidate }) => {
-          const pc = peerConnections.current[from];
+          const pc = peerConnections.current?.[from];
           if (pc && candidate) {
             await pc.addIceCandidate(new RTCIceCandidate(candidate));
           }
         });
 
-        // Initiate call to other users
+        // Emit a group call offer
         socket.emit('group_call_offer', {
           room,
           offer: await createOffer(stream),
@@ -65,6 +74,8 @@ const VideoGrid: React.FC<VideoGridProps> = ({ room, username }) => {
     };
 
     const createOffer = async (stream: MediaStream) => {
+      if (!peerConnections.current) peerConnections.current = {}; // Initialize if null
+
       const pc = new RTCPeerConnection();
       peerConnections.current[username] = pc;
 
@@ -86,8 +97,9 @@ const VideoGrid: React.FC<VideoGridProps> = ({ room, username }) => {
 
     initLocalStream();
 
+    // Cleanup peer connections on component unmount
     return () => {
-      Object.values(peerConnections.current).forEach((pc) => pc.close());
+      Object.values(peerConnections.current || {}).forEach((pc) => pc.close());
     };
   }, [room, username]);
 
