@@ -1,10 +1,11 @@
 // src/pages/MeetRoom.tsx
 import React, { useState } from 'react';
-import socket from '../services/socket';
+// import socket from '../services/socket';
 import VideoGrid from '../components/VideoGrid';
 import Chat from '../components/Chat';
 import Controls from '../components/Controls';
-
+import { io } from 'socket.io-client';
+const socket = io(import.meta.env.VITE_BACKEND_URL || 'http://localhost:5001');
 const MeetRoom: React.FC = () => {
   const [room, setRoom] = useState<string>('');
   const [username, setUsername] = useState<string>('');

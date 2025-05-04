@@ -1,6 +1,7 @@
 // src/components/Chat.tsx
 import React, { useEffect, useState } from 'react';
-import socket from '../services/socket';
+import { io } from 'socket.io-client';
+const socket = io(import.meta.env.VITE_BACKEND_URL || 'http://localhost:5001');
 
 interface ChatProps {
   room: string;

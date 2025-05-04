@@ -1,6 +1,7 @@
 // src/components/VideoGrid.tsx
 import React, { useEffect, useRef, useState } from 'react';
-import socket from '../services/socket';
+import { io } from 'socket.io-client';
+const socket = io(import.meta.env.VITE_BACKEND_URL || 'http://localhost:5001');
 
 // Initialize peerConnections without passing arguments to createRef
 export const peerConnections = React.createRef<{ [key: string]: RTCPeerConnection }>(); // No initial value passed

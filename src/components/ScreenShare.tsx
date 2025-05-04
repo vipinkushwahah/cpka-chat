@@ -1,8 +1,9 @@
 // src/components/ScreenShare.tsx
 import React from 'react';
-import socket from '../services/socket';
+// import socket from '../services/socket';
 import { peerConnections } from './VideoGrid'; // Import peerConnections
-
+import { io } from 'socket.io-client';
+const socket = io(import.meta.env.VITE_BACKEND_URL || 'http://localhost:5001');
 interface ScreenShareProps {
   room: string;
   username: string;
