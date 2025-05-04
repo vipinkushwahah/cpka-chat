@@ -7,7 +7,7 @@ interface ScreenShareProps {
   username: string;
 }
 
-const ScreenShare: React.FC<ScreenShareProps> = ({ room, username }) => {
+const ScreenShare: React.FC<ScreenShareProps> = ({ room }) => {
   const startScreenShare = async () => {
     try {
       const stream = await (navigator.mediaDevices as any).getDisplayMedia({

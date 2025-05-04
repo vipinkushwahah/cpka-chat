@@ -7,7 +7,7 @@ interface FileShareProps {
   username: string;
 }
 
-const FileShare: React.FC<FileShareProps> = ({ room, username }) => {
+const FileShare: React.FC<FileShareProps> = ({ room }) => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {

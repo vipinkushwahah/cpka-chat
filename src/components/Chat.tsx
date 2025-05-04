@@ -14,7 +14,7 @@ interface Message {
   group: string;
 }
 
-const Chat: React.FC<ChatProps> = ({ room, username }) => {
+const Chat: React.FC<ChatProps> = ({ room }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState<string>('');
 
