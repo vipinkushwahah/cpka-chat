@@ -9,14 +9,32 @@ interface Project {
   imageUrl: string;
 }
 
+const api = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5001';
+
 export default function Home() {
   const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Specify the expected data type here
-    axios.get<Project[]>('https://chat-backend-gtvs.onrender.com/projects')
-      .then(res => setProjects(res.data));
+    axios.get<Project[]>(`${api}/projects`)
+      .then((res) => {
+        setProjects(res.data);
+        setLoading(false);
+      })
+      .catch(() => {
+        setError('Failed to fetch projects.');
+        setLoading(false);
+      });
   }, []);
+
+  if (loading) {
+    return <div>Loading projects...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
 
   return (
     <div className="home">
@@ -25,7 +43,11 @@ export default function Home() {
         {projects.map(p => (
           <Link key={p.id} to={`/project/${p.id}`}>
             <div className="project-card">
-              <img src={`https://chat-backend-gtvs.onrender.com${p.imageUrl}`} alt={p.title} />
+              <img 
+                src={`${api}${p.imageUrl}`} 
+                alt={p.title} 
+                onError={(e) => (e.target as HTMLImageElement).src = '/default-image.jpg'} // Fallback image
+              />
               <h3>{p.title}</h3>
             </div>
           </Link>

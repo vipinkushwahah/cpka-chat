@@ -19,4 +19,30 @@
       gap: 1.5rem;
     }
   }
+  .home {
+    .project-list {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+  
+    .project-card {
+      width: 200px;
+      padding: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      text-align: center;
+    }
+  
+    .loading {
+      font-size: 1.5rem;
+      color: gray;
+    }
+  
+    .error {
+      color: red;
+      font-size: 1rem;
+      text-align: center;
+    }
+  }
   

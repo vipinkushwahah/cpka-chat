@@ -10,13 +10,16 @@ interface Project {
   imageUrl: string;
 }
 
+// Getting the backend URL from environment variables
+const api = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5001';
+
 export default function ProjectDetail() {
   const { id } = useParams();
   const [project, setProject] = useState<Project | null>(null);
 
   useEffect(() => {
-    // Explicitly define the response type here
-    axios.get<Project>(`https://chat-backend-gtvs.onrender.com/projects/${id}`)
+    // Fix the endpoint by adding /projects/ to the URL
+    axios.get<Project>(`${api}/projects/${id}`)
       .then(res => setProject(res.data))
       .catch(() => setProject(null));
   }, [id]);
@@ -26,7 +29,7 @@ export default function ProjectDetail() {
   return (
     <div className="project-detail">
       <h2>{project.title}</h2>
-      <img src={`https://chat-backend-gtvs.onrender.com${project.imageUrl}`} alt={project.title} />
+      <img src={`${api}${project.imageUrl}`} alt={project.title} />
       <p>{project.description}</p>
     </div>
   );

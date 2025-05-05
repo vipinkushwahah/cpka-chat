@@ -32,4 +32,19 @@
       }
     }
   }
+  .add-project {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .error {
+    color: red;
+    font-size: 1rem;
+  }
+  
+  button:disabled {
+    background-color: gray;
+    cursor: not-allowed;
+  }
   
